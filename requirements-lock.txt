@@ -1,0 +1,23 @@
+# Exact versions DisenQ was developed and verified against.
+# Python 3.10.20, CUDA 11.8, NVIDIA A100-40GB.
+#
+#   pip install torch==2.7.1 torchvision==0.22.1 --index-url https://download.pytorch.org/whl/cu118
+#   pip install -r requirements-lock.txt
+#
+# Use requirements.txt instead if you want version ranges.
+
+torch==2.7.1
+torchvision==0.22.1
+transformers==4.45.2
+tokenizers==0.20.3
+safetensors==0.7.0
+huggingface-hub==0.36.2
+omegaconf==2.3.0
+antlr4-python3-runtime==4.9.3
+numpy==1.26.4
+Pillow==12.2.0
+tqdm==4.67.3
+decord==0.6.0
+accelerate==1.13.0
+sentencepiece==0.2.1
+protobuf==7.35.0

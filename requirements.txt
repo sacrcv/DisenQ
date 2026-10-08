@@ -1,0 +1,38 @@
+# DisenQ runtime dependencies.
+#
+# Install PyTorch first, matched to your CUDA version, from
+# https://pytorch.org/get-started/locally/ -- e.g. for CUDA 11.8:
+#
+#   pip install torch==2.7.1 torchvision==0.22.1 --index-url https://download.pytorch.org/whl/cu118
+#
+# then:  pip install -r requirements.txt
+#
+# For the exact versions this repo was developed and verified against, use
+# requirements-lock.txt instead.
+
+# --- core ---
+torch>=2.0
+torchvision>=0.15
+transformers>=4.28,<5         # Qformer.py targets the HF BERT 4.x API
+omegaconf>=2.2                # YAML configs with _base_ inheritance
+numpy>=1.22,<3
+Pillow>=9.0                   # frame decoding
+tqdm>=4.64
+
+# transformers needs these to load the BERT tokenizer and safetensors weights
+tokenizers>=0.13
+safetensors>=0.3
+huggingface-hub>=0.16
+
+# --- optional: video files instead of pre-extracted frames ---
+# Needed by tools/extract_frames.py and by annotations that use a "video" field
+# rather than "frames_dir". Skip it if you only ever use extracted frames.
+# No wheels exist for Apple Silicon; build from source or skip it there.
+decord>=0.6
+
+# --- optional: prompt generation with LLaVA (tools/generate_prompts.py) ---
+# One-off preprocessing. The VLM is never needed at train or inference time.
+accelerate>=0.26
+sentencepiece>=0.1.99
+protobuf>=3.20
+

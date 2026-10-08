@@ -1,0 +1,126 @@
+================================================================================
+DisenQ — License
+================================================================================
+
+Copyright (c) 2025 University of Central Florida. All rights reserved.
+
+Please credit the authors and cite the paper listed in the README when
+you share or adapt this material.
+
+Except for the third-party components listed in Part B below, this repository
+is licensed under the
+
+    Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International
+    (CC BY-NC-SA 4.0)
+
+Full license text: https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode
+Summary:           https://creativecommons.org/licenses/by-nc-sa/4.0/
+
+(CC BY-NC-SA 4.0 Section 3(a)(1)(C) permits referring to the license by URI
+rather than reproducing its full text.)
+
+In short, you may share and adapt this material provided that you give
+appropriate credit, do not use it for commercial purposes, and distribute any
+derivative work under the same license. The license grants rights under
+copyright only; see Part C regarding patents.
+
+THE MATERIAL IS PROVIDED AS-IS AND WITHOUT WARRANTIES OF ANY KIND, AND THE
+LICENSOR WILL NOT BE LIABLE FOR ANY DAMAGES ARISING FROM ITS USE, TO THE
+FULLEST EXTENT PERMITTED BY LAW. See Section 5 of the full license text.
+
+
+--------------------------------------------------------------------------------
+PART A — SCOPE
+--------------------------------------------------------------------------------
+
+CC BY-NC-SA 4.0 applies to the original work in this repository, which is
+everything except the files named in Part B.
+
+
+--------------------------------------------------------------------------------
+PART B — THIRD-PARTY COMPONENTS (NOT CC BY-NC-SA)
+--------------------------------------------------------------------------------
+
+The following files are vendored from Salesforce LAVIS
+(https://github.com/salesforce/LAVIS) and remain under the BSD 3-Clause
+License. They are NOT relicensed, and the NonCommercial and ShareAlike
+conditions above do NOT apply to them. You may continue to use these files
+under BSD 3-Clause terms independently of this repository.
+
+    disenq/models/Qformer.py    (BLIP-2 Q-Former)
+    disenq/models/eva_vit.py    (EVA-CLIP ViT-G/14)
+    disenq/utils/dist.py        (download_cached_file only)
+
+BSD 3-Clause License
+
+Copyright (c) 2023, salesforce.com, inc.
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are met:
+
+1. Redistributions of source code must retain the above copyright notice, this
+   list of conditions and the following disclaimer.
+
+2. Redistributions in binary form must reproduce the above copyright notice,
+   this list of conditions and the following disclaimer in the documentation
+   and/or other materials provided with the distribution.
+
+3. Neither the name of the copyright holder nor the names of its contributors
+   may be used to endorse or promote products derived from this software
+   without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
+FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+These files carry their original copyright headers and have been modified only
+as needed to vendor them: import paths were repointed, Qformer.py gained a
+compatibility shim so it works across transformers versions, and eva_vit.py now
+imports three helpers from disenq/models/layers.py instead of from timm. LAVIS
+credits the EVA, BEiT, timm, DeiT and DINO codebases for eva_vit.py; see that
+file's header.
+
+Additionally, disenq/models/layers.py reimplements three small helpers whose
+stochastic-depth formulation follows pytorch-image-models (timm), Apache
+License 2.0 — https://github.com/huggingface/pytorch-image-models
+
+
+--------------------------------------------------------------------------------
+PART C — PATENT NOTICE
+--------------------------------------------------------------------------------
+
+This repository implements technology covered, fully or partially, by a patent
+owned by the University of Central Florida (UCF):
+
+    US Patent 12,482,255
+    "Activity-based person identification using biometric disentanglement"
+    S. Azad, Y. S. Rawat
+
+NO PATENT RIGHTS ARE GRANTED BY THIS LICENSE. CC BY-NC-SA 4.0 is a copyright
+license only; Section 2(b)(2) of that license states expressly that "Patent and
+trademark rights are not licensed under this Public License."
+
+The copyright permission granted above therefore does not authorize practicing
+the patented inventions. Commercial use, and any other use requiring patent rights,
+requires a separate license from UCF.
+
+    UCF Office of Technology Transfer
+    https://www.research.ucf.edu/tech-transfer/contact/
+
+
+
+--------------------------------------------------------------------------------
+PART D — DATASETS
+--------------------------------------------------------------------------------
+
+No dataset is distributed with this code. NTU RGB+D 120, Charades and MEVID each carry
+their own licence and must be obtained from their original providers, whose
+terms govern their use. See the README for links.

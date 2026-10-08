@@ -1,0 +1,33 @@
+# MEVID: 158 actors, 8k tracklets, large viewpoint / distance / lighting
+# variation. A traditional video re-ID benchmark used to test generalisation
+# (Table 2), evaluated with the official protocol: gallery tracklets sharing
+# both identity and camera with the probe are discarded.
+#
+# Appendix E: "As MEVID primarily features walking sequences, we assign all
+# tracklets a 'walking' label to enable coarse motion supervision."
+#
+#   python tools/prepare_dataset.py --dataset mevid --mevid-root data/mevid \
+#       --out data/mevid/annotations.json
+
+_base_: _base.yaml
+
+data:
+  annotation: data/mevid/annotations.json
+  prompts: data/mevid/prompts.json
+  num_frames: 8
+  frame_stride: 4
+  sampling: stride
+
+loss:
+  # Only one action class, so L_Act carries almost no information. Keep it on
+  # at a low weight for consistency with the other benchmarks.
+  act_weight: 0.01
+
+run:
+  output_dir: output/mevid
+  max_epoch: 60
+  batch_size: 32
+  batch_size_eval: 64
+  protocols: [general]
+  primary_protocol: general
+  primary_metric: "R@1"

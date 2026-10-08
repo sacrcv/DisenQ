@@ -1,0 +1,122 @@
+# Defaults shared by every dataset config. Dataset configs inherit this via
+# `_base_: _base.yaml` and override what they need.
+
+model:
+  # ---- visual encoder (Section 4.1: ViT-G/14 from EVA-CLIP) ----
+  visual_encoder: eva_clip_g       # or hf:<model_id>, e.g. hf:google/siglip-large-patch16-224
+  image_size: 224
+  vit_precision: fp16              # EVA ViT-G ships fp16 weights
+  freeze_vit: true
+  vit_grad_checkpoint: false
+  drop_path_rate: 0.0
+  max_frames: 64                   # capacity of the temporal position embedding
+  temporal_pooling_dropout: 0.0
+
+  # ---- DisenQ (Section 3.2) ----
+  num_query_token: 32              # per query set; there are three sets
+  cross_attention_freq: 2          # BLIP-2 default: cross-attend every other block
+  # Which feature types get their own query set. Dropping one reproduces the
+  # Table 3 (middle) ablation, e.g. [biometrics, motion]. 'biometrics' is
+  # required, since it is what identification uses.
+  branches: [biometrics, motion, non_biometrics]
+  qformer_num_layers: null         # null = BERT's 12; raise it for the
+                                   # "deeper DisenQ" design-choice ablation
+  qformer_encoder_width: null       # null -> match the visual encoder width
+  bert_model: bert-base-uncased
+  pretrained_bert: true
+  qformer_grad_checkpoint: false
+  prune_qformer_text_branch: true  # drop the unused word-embedding / LM / text-FFN weights
+  # Section 4.1: "We initialize DisenQ with pre-trained weights from InstructBLIP."
+  # Alternatives: blip2_pretrain (3x smaller), a local .pth path, or none.
+  pretrained_qformer: instructblip_vicuna7b
+
+  # ---- language supervision (Section 3.1, training only) ----
+  use_text_supervision: true
+  text_encoder: bert-base-uncased  # frozen
+  max_text_len: 48
+  text_gate_init: 1.0              # scales the text half of the cross-attention context
+  text_drop_prob: 0.0              # >0 randomly drops text, narrowing the train/test gap
+  local_files_only: false
+
+  # ---- heads (Section 3.3) ----
+  head_dropout: 0.0
+  cosine_classifier: false
+  adaptive_sim_hidden: 32
+  adaptive_sim_layers: 2
+
+loss:
+  # Eq. 7. The paper states lambda_i = 0.01 for all four terms; taken literally
+  # that just rescales the learning rate, so the identification terms are kept
+  # at 1.0 here and only the auxiliary terms use 0.01. See README.
+  id_weight: 1.0          # lambda_1, L_ID    (Eq. 4 on F_b)
+  triplet_weight: 1.0     # lambda_2, L_Tri   (Eq. 5 on F_b)
+  orth_weight: 0.01       # lambda_3, L_Orth  (Eq. 6 between F_b and F_b_hat)
+  act_weight: 0.01        # lambda_4, L_Act   (Eq. 4 on F_m)
+  sim_weight: 0.1         # trains the Eq. 8 adaptive weighting MLP
+  triplet_margin: 0.3     # m in Eq. 5
+  label_smoothing: 0.0
+  orth_mode: gram         # gram (matches Eq. 6) | dot
+  action_mode: ce         # ce | bce (multi-label datasets)
+  sim_mode: ranking       # ranking | bce
+
+data:
+  data_root: data
+  annotation: null         # set per dataset
+  prompts: null            # JSON produced by tools/generate_prompts.py
+  cached_vit_features_root: null   # optional output of tools/extract_vit_features.py
+  image_size: 224
+  num_frames: 8            # Section 4.1: 8 frames, stride 4
+  frame_stride: 4
+  sampling: stride         # stride (paper) | linspace (long untrimmed videos)
+  frame_template: "frame{:06d}.jpg"
+  frame_index_base: 1
+  augmentation:
+    horizontal_flip: 0.5   # Section 4.1: the only augmentation the paper uses
+    random_crop_pad: 0
+    random_erasing: 0.0
+
+sampler:
+  num_instances: 4         # K clips per identity; P = batch_size / K
+
+run:
+  output_dir: output/disenq
+  seed: 42
+  deterministic: false
+
+  # Section 4.1: 60 epochs, batch 32 (8 identities x 4 clips), AdamW,
+  # lr 1e-4, weight decay 5e-2, betas [0.9, 0.999].
+  max_epoch: 60
+  batch_size: 32
+  batch_size_eval: 32
+  lr: 1.0e-4
+  weight_decay: 5.0e-2
+  betas: [0.9, 0.999]
+  head_lr_mult: 1.0
+  warmup_epochs: 1
+  min_lr_ratio: 0.01
+  warmup_start_ratio: 0.01
+  clip_grad_norm: 5.0
+  accum_grad_iters: 1
+  amp: bf16                # bf16 | fp16 | none
+
+  num_workers: 8
+  persistent_workers: false
+  prefetch_factor: 2
+  pin_memory: true
+  find_unused_parameters: true
+
+  print_freq: 20
+  eval_freq: 10
+  save_freq: 10
+  resume: null
+  checkpoint: null
+
+  # ---- retrieval (Eq. 8) ----
+  use_motion: true
+  adaptive_similarity: true
+  fixed_alpha: 0.5
+  max_rank: 50
+  eval_feature: fused      # fused | biometrics | motion | non_biometrics
+  protocols: [same_activity]
+  primary_protocol: same_activity
+  primary_metric: "R@1"
